@@ -1,180 +1,22 @@
 package com.example.csarch2simulation;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class Main{
-	
-	public static void main(String[] args) {
-		ArrayList<Integer> Q = new ArrayList<>();
-		ArrayList<Integer> A = new ArrayList<>();
+public class Simulation extends Application {
 
-		Scanner input = new Scanner(System.in);
-        System.out.println("Input M:"); 
-		String sM = input.next();
+    @Override
+    public void start(Stage stage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource(".fxml file here"));
 
-		for(int i=0; i< sM.length(); i++){
-			A.set(i, Integer.parseInt(sM.getCharAt(i)));
-		}
-		System.out.println("Input Q:"); 
-		String sQ = input.next();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
 
-		for(int i=0; i< sQ.length(); i++){
-			Q.set(i, Integer.parseInt(sQ.getCharAt(i)));
-		}
-  }
-  public class Simulation {
-		private ArrayList<Integer> Q = new Arraylist<>();
-		private ArrayList<Integer> A = new Arraylist<>();
-		private ArrayList<Integer> M = new Arraylist<>();
-		private ArrayList<Integer> nM = new Arraylist<>();
-		
-		public Simulation(ArrayList<Integer> Q, ArrayList<Integer> M){
-			this.Q = new int[Q.length];
-			this.A = new int[Q.length+1];
-			this.M = new int[Q.length+1];
-			this.nM = new int[Q.length+1];
-
-			this.Q = Q;
-			// add extra 0 bit
-			this.M.add(0);
-			this.M = M;
-
-			for(int i=0; i<Q.length+1; i++){
-				this.A.add(0);
-			}
-
-			this.nM = twosCompliment(this.M);
-		}
-		
-		
-		public ArrayList<Integer> twosCompliment(ArrayList<Integer> M){
-
-			boolean first1=false;
-
-			for (int i=M.size()-1; i>=0; i--) {
-
-				if (M.get(i) == 1){
-					// check if it's the 1st 1 bit is already found
-					if (!first1){
-						first1=true;
-					} else {
-						M.set(i, 0);
-					}
-				} 
-				
-				else{
-					// check if it's the 1st 1 bit is already found
-					if (!first1){
-						continue;
-					} else {
-						M.set(i, 1);
-					}
-				}
-			}
-			return M;
-		}
-
-		public void getAllPasses() {
-			int n = Q.size();
-			// iteration for each pass
-			for(int i=0; i<n; i++) {
-
-				this.leftShift(this.A, this.Q);
-				
-				System.out.println("Pass number " +i+":\n");
-				System.out.println("A: "+this.A+", Q: "+this.Q);
-			}
-		}
-		
-		public void leftShift(ArrayList<Integer> A, ArrayList<Integer> Q){
-
-			ArrayList<Integer> ACopy = new ArrayList<>(A);
-
-			// Process A
-			for(int i=0; i<A.length; i++){
-				//check for last bit
-				if (i == A.length-1){
-					// get first bit from Q to put in last bit of A
-					A.set(i, Q.get(0));
-				} 
-				
-				else {
-					//set the next bit to current bit value
-					A.set(i, M.get(i+1));
-				}
-			}
-
-			// Process Q
-			for(int i=0; i<Q.length+1; i++){
-				// check for last bit
-				if (i == Q.length-1){
-					Q.remove(i);
-				} 
-				
-				else {
-					//set the next bit to current bit value
-					Q.set(i, Q.get(i+1));
-				}
-			}
-
-			ArrayList<Integer> temp = this.AddBits(A, this.nM);
-
-			if (temp.get(0) == 1){
-				// if 1, restore so return copy of A
-				// also set last bit of Q to 0
-				Q.add(0);
-				this.Q = Q;
-				this.A = ACopy;
-			} 
-
-			else {
-				// if 0, return new added binary number
-				// also set bit of Q to 1
-				Q.add(1);
-				this.Q = Q;
-				this.A = temp;
-			}
-		}
-
-		public ArrayList<Integer> addBits(ArrayList<Integer> A, ArrayList<Integer> B) {
-			
-			int carry = 0;
-			ArrayList<Integer> temp = new ArrayList<Integer>();
-
-			for (int i=M.size()-1; i>=0; i--){
-
-				if(A.get(i) == 1){ //A[i] == 1
-
-					if (B.get(i) == 1){
-						// 1+1
-						carry+=2;
-					}
-					else { 
-						//1+0
-						carry+=1;
-					}
-
-				}
-				else { //A[i] == 0
-					
-					if (B.get(i) == 1){
-						// 0+1
-						carry+=1;
-					}
-					//ignore if 0+0
-				}
-				
-				// modulo 2 to set 1 or 0
-				temp.add(carry%2);
-
-				// integer division to get the carry
-				if (carry > 1){
-					carry = 1;
-				}
-			}
-			return temp;
-		}
-	}
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
-
